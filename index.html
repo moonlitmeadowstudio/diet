@@ -117,14 +117,45 @@
         Сделано с любовью к отдыху · Обнови фон и включи музыку для полного эффекта
         <div>
           <!-- Видимый iframe с автозапуском музыки -->
-        <iframe src="https://archive.org/embed/soundcloud-632634339?autoplay=1" 
-          width="500" height="30" 
-          frameborder="0" 
-          allow="autoplay" 
-          webkitallowfullscreen="true" 
-          mozallowfullscreen="true" 
-          allowfullscreen>
-        </iframe>
+<!-- Видимый iframe как визуальный плеер -->
+<iframe src="https://archive.org/embed/soundcloud-632634339?autoplay=1" 
+        width="500" height="30" 
+        frameborder="0" 
+        allow="autoplay" 
+        webkitallowfullscreen="true" 
+        mozallowfullscreen="true" 
+        allowfullscreen>
+</iframe>
+
+<!-- Нативный аудио-источник: управляем громкостью и надёжно автозапускаем (вначале без звука) -->
+<audio id="bgAudio" preload="auto" autoplay loop playsinline muted style="display:none">
+  <source src="https://archive.org/download/summer-mix-2020-chillout-lounge-relaxing-deep-house-music/Best%20Of%20Tropical%20Deep%20House%20Music%202020%20Chill%20Out%20Mix%20Best%20Summer%20Hits.mp3" type="audio/mpeg" />
+</audio>
+<script>
+  (function(){
+    const audio = document.getElementById('bgAudio');
+    if(!audio) return;
+    audio.volume = 0.6; // желаемая громкость после первого жеста
+
+    // Попытка автозапуска (в большинстве браузеров пройдёт только в mute)
+    audio.play && audio.play().catch(()=>{});
+
+    // Снимаем mute при первом взаимодействии пользователя
+    const lift = async () => {
+      try {
+        audio.muted = false;
+        await audio.play();
+      } catch(e) {}
+      window.removeEventListener('click', lift);
+      window.removeEventListener('touchstart', lift);
+      window.removeEventListener('keydown', lift);
+    };
+    window.addEventListener('click', lift, { once:true });
+    window.addEventListener('touchstart', lift, { once:true });
+    window.addEventListener('keydown', lift, { once:true });
+  })();
+</script>
+
 
         </div>
       </footer>
