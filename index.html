@@ -8,109 +8,122 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
   <style>
-    :root{
-      --bg-blur: 6px;
-      --glass-bg: rgba(255,255,255,.14);
-      --glass-stroke: rgba(255,255,255,.3);
-      --accent: #00d4ff;
-      --accent-2: #00ffa3;
-      --text: #0b1220;
-    }
+    /* Оставляем все текущие стили */
+    :root{--bg-blur:6px;--glass-bg:rgba(255,255,255,.14);--glass-stroke:rgba(255,255,255,.3);--accent:#00d4ff;--accent-2:#00ffa3;--text:#0b1220;}
     *{box-sizing:border-box}
     html,body{height:100%}
-    body{
-      margin:0;
-      font-family:"Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      color:var(--text);
-      background: #0b1220;
-    }
-    .bg{
-      position: fixed;
-      inset: 0;
-      z-index: -2;
-      background-position:center;
-      background-size:cover;
-      background-attachment: fixed;
-      transition: background-image .6s ease-in-out;
-      filter: saturate(1.05) contrast(1.05);
-    }
-    .bg::after{
-      content:"";
-      position:absolute; inset:0;
-      background: radial-gradient(80% 60% at 50% 20%, rgba(255,255,255,.18) 0%, rgba(255,255,255,.05) 40%, rgba(0,0,0,.55) 100%),
-                  linear-gradient(180deg, rgba(0,0,0,.05) 0%, rgba(0,0,0,.55) 100%);
-    }
-    .noise{position:fixed; inset:0; z-index:-1; opacity:.04; pointer-events:none; background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23n)" opacity=".6"/></svg>'); mix-blend-mode:overlay}
-
-    .wrap{min-height:100dvh; display:grid; place-items:center; padding:120px 20px 40px}
-    .card{
-      width:min(980px, 96vw);
-      padding:30px;
-      border-radius:28px;
-      background: linear-gradient(180deg, rgba(255,255,255,.28), rgba(255,255,255,.12));
-      border:1px solid var(--glass-stroke);
-      box-shadow: 0 20px 80px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.25);
-      backdrop-filter: blur(calc(var(--bg-blur) + 5px));
-      -webkit-backdrop-filter: blur(calc(var(--bg-blur) + 5px));
-    }
-    h1{margin:0 0 8px; font-size: clamp(28px, 6vw, 62px); line-height:1.05; letter-spacing: -.5px}
-    .sub{font-size: clamp(14px, 2.5vw, 18px); opacity:.9; margin-bottom:20px}
-
-    .timer-box{display:grid; gap:18px; align-items:center; grid-template-columns: 1fr}
-    .meta{display:flex; flex-wrap:wrap; gap:12px; align-items:center; font-size:14px}
-    .chip{padding:8px 12px; border-radius:999px; background: rgba(255,255,255,.4); border:1px solid var(--glass-stroke)}
-
-    .controls{display:flex; flex-wrap:wrap; gap:10px; margin-top:14px}
-    .btn{appearance:none; border:0; cursor:pointer; padding:12px 16px; border-radius:12px; font-weight:600; background: linear-gradient(135deg, var(--accent), var(--accent-2)); box-shadow: 0 10px 26px rgba(0, 212, 255, .35)}
-    .btn-ghost{background: rgba(255,255,255,.5); border:1px solid var(--glass-stroke); box-shadow:none}
-
-    .sections{display:grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap:16px; margin-top:24px}
-    .sec{padding:18px; border-radius:18px; background: rgba(255,255,255,.5); border:1px solid var(--glass-stroke)}
+    body{margin:0;font-family:"Inter",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--text);background:#0b1220;}
+    .bg{position:fixed;inset:0;z-index:-2;background-position:center;background-size:cover;background-attachment:fixed;transition:background-image .6s ease-in-out;filter:saturate(1.05) contrast(1.05);}
+    .bg::after{content:"";position:absolute;inset:0;background:radial-gradient(80% 60% at 50% 20%,rgba(255,255,255,.18) 0%,rgba(255,255,255,.05) 40%,rgba(0,0,0,.55) 100%),linear-gradient(180deg,rgba(0,0,0,.05) 0%,rgba(0,0,0,.55) 100%);}
+    .noise{position:fixed;inset:0;z-index:-1;opacity:.04;pointer-events:none;background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23n)" opacity=".6"/></svg>');mix-blend-mode:overlay}
+    header{position:fixed;top:0;left:0;right:0;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:16px 24px;backdrop-filter:blur(var(--bg-blur));-webkit-backdrop-filter:blur(var(--bg-blur));background:linear-gradient(180deg,rgba(255,255,255,.22),rgba(255,255,255,.06));border-bottom:1px solid var(--glass-stroke)}
+    .brand{display:flex;gap:10px;align-items:center;font-weight:800;letter-spacing:.4px}
+    .logo{width:36px;height:36px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent-2));box-shadow:0 6px 24px rgba(0, 212, 255, .35)}
+    .wrap{min-height:100dvh;display:grid;place-items:center;padding:120px 20px 40px}
+    .card{width:min(980px,96vw);padding:30px;border-radius:28px;background:linear-gradient(180deg,rgba(255,255,255,.28),rgba(255,255,255,.12));border:1px solid var(--glass-stroke);box-shadow:0 20px 80px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.25);backdrop-filter:blur(calc(var(--bg-blur) + 5px));-webkit-backdrop-filter:blur(calc(var(--bg-blur) + 5px))}
+    h1{margin:0 0 8px;font-size:clamp(28px,6vw,62px);line-height:1.05;letter-spacing:-.5px}
+    .sub{font-size:clamp(14px,2.5vw,18px);opacity:.9;margin-bottom:20px}
+    .timer-box{display:grid;gap:18px;align-items:center;grid-template-columns:1fr}
+    .meta{display:flex;flex-wrap:wrap;gap:12px;align-items:center;font-size:14px}
+    .chip{padding:8px 12px;border-radius:999px;background:rgba(255,255,255,.4);border:1px solid var(--glass-stroke)}
+    .controls{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+    .btn{appearance:none;border:0;cursor:pointer;padding:12px 16px;border-radius:12px;font-weight:600;background:linear-gradient(135deg,var(--accent),var(--accent-2));box-shadow:0 10px 26px rgba(0, 212, 255, .35)}
+    .btn-ghost{background:rgba(255,255,255,.5);border:1px solid var(--glass-stroke);box-shadow:none}
+    .sections{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-top:24px}
+    .sec{padding:18px;border-radius:18px;background:rgba(255,255,255,.5);border:1px solid var(--glass-stroke)}
     .sec h3{margin:0 0 8px}
-
-    footer{margin-top:28px; text-align:center; font-size:12px; opacity:.8}
-    .timer-embed{min-height:120px; display:grid; place-items:center; border-radius:16px; border:1px dashed rgba(255,255,255,.45); background: rgba(255,255,255,.35)}
-
-    @media (min-width: 880px){ .timer-box{grid-template-columns: 1.2fr .8fr} }
-  </style>
+    footer{margin-top:28px;text-align:center;font-size:12px;opacity:.8}
+    .timer-embed{min-height:120px;display:grid;place-items:center;border-radius:16px;border:1px dashed rgba(255,255,255,.45);background:rgba(255,255,255,.35)}
+    .music-frame{width:100%;height:120px;border:none;border-radius:16px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);background:rgba(255,255,255,.3);box-shadow:0 8px 20px rgba(0,0,0,.25);overflow:hidden}
+    .music-frame iframe{width:100%;height:100%;border:none;opacity:0.9}
+    @media(min-width:880px){.timer-box{grid-template-columns:1.2fr .8fr}}
+    .audio-card{position:relative;margin-top:16px;border-radius:16px;border:1px solid var(--glass-stroke);background:rgba(255,255,255,.35);backdrop-filter:blur(calc(var(--bg-blur) + 4px));-webkit-backdrop-filter:blur(calc(var(--bg-blur) + 4px));box-shadow:0 10px 30px rgba(0,0,0,.18);overflow:hidden}
+  .audio-card iframe{display:block;width:100%;height:120px;border:0;opacity:0.001}
+  .audio-ui{position:absolute;inset:0;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px}
+  .audio-left{display:flex;align-items:center;gap:10px}
+  .audio-btn{appearance:none;border:0;border-radius:12px;padding:10px 14px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,var(--accent),var(--accent-2));box-shadow:0 8px 20px rgba(0,212,255,.35)}
+  .audio-meta{font-size:14px;opacity:.9}
+  .audio-vol{display:flex;align-items:center;gap:8px}
+  .audio-vol input{width:140px}
+</style>
 </head>
 <body>
   <div id="bg" class="bg"></div>
   <div class="noise"></div>
 
   <main class="wrap">
-    <section class="card">
-      <h1>Отпуск уже близко ✈️🏝️</h1>
-      <p class="sub">Отсчитываем дни до старта — расслабься, вдохни глубже и представь шум волн.</p>
-      <div class="timer-embed">
-        <script src="//megatimer.ru/get/ea650308371fe7b51c631392344e31f2.js"></script>
+    <section class="card" aria-labelledby="title">
+      <h1 id="title">Отпуск уже близко ✈️🏝️</h1>
+      <p class="sub">Отсчитываем дни до старта — расслабься, вдохни глубже и представь шум волн. Таймер ниже всё подскажет.</p>
+      <div class="timer-box">
+        <div>
+          <div class="meta" aria-label="Информация о поездке">
+            <span class="chip">Маршрут: Кристал вотер лотер</span>
+            <span class="chip">Настроение: максимум 🔆</span>
+            <span class="chip">Плейлист: chill & deep house</span>
+          </div>
+          <div class="sections" aria-label="Планы на отпуск">
+            <article class="sec"><h3>Расслабон</h3><p>Пляж, море, сладкий сон и ничего лишнего.</p></article>
+            <article class="sec"><h3>Движ</h3><p>Горячий секс, вечерние прогулки и фото на закате.</p></article>
+            <article class="sec"><h3>Вкусно</h3><p>Местная кухня, свежие фрукты и вкусный кофе.</p></article>
+            <article class="sec"><h3>Дзен</h3><p>Мини-детокс от чатов и задач — только ты, я и море.</p></article>
+          </div>
+        </div>
+        <div>
+          <div class="timer-embed" aria-live="polite" aria-label="Таймер до отпуска">
+            <script src="//megatimer.ru/get/ea650308371fe7b51c631392344e31f2.js"></script>
+          </div>
+          <div class="controls">
+            <button id="setBgToday" class="btn" type="button">Сделать фон «сегодняшнего настроения»</button>
+          </div>
+          <div class="audio-card" aria-label="Музыкальный плеер: chill & deep house">
+  <iframe title="Chill Deep House" src="https://archive.org/embed/soundcloud-632634339?autoplay=1" allow="autoplay; encrypted-media"></iframe>
+  <audio id="bgAudio" preload="auto" loop autoplay muted>
+    <source src="https://archive.org/download/summer-mix-2020-chillout-lounge-relaxing-deep-house-music/Best%20Of%20Tropical%20Deep%20House%20Music%202020%20Chill%20Out%20Mix%20Best%20Summer%20Hits.mp3" type="audio/mpeg" />
+  </audio>
+  <div class="audio-ui">
+    <div class="audio-left">
+      <button id="musicToggle" class="audio-btn" type="button">▶ Музыка</button>
+      <div class="audio-meta">Tropical Deep House · Summer mix</div>
+    </div>
+    <div class="audio-vol">
+      <span>Громкость</span>
+      <input id="volume" type="range" min="0" max="1" step="0.01" value="0.35" />
+    </div>
+  </div>
+</div>
+        </div>
       </div>
-      <button id="setBgToday" class="btn" type="button">Сделать фон «сегодняшнего настроения»</button>
-      <div style="margin-top:20px;">
-        <!-- Встроенный плеер с автозапуском -->
-        <iframe title="Chill Deep House" src="https://archive.org/embed/soundcloud-632634339?autoplay=1" width="100%" height="120" frameborder="0" allow="autoplay; encrypted-media"></iframe>
-      </div>
+      <footer>Сделано с любовью к отдыху · Обнови фон и включи музыку для полного эффекта</footer>
     </section>
   </main>
 
   <script>
-    const backgrounds = [
-      'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80',
-      'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=1920&q=80',
-      'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1920&q=80',
-      'https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1920&q=80',
-      'https://images.unsplash.com/photo-1493558103817-58b2924bce98?auto=format&fit=crop&w=1920&q=80'
-    ];
-
-    const bgEl = document.getElementById('bg');
-    const applyBackground = (url) => { bgEl.style.backgroundImage = `url(${url})`; };
+    const backgrounds=['https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80','https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=1920&q=80','https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1920&q=80','https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1920&q=80','https://images.unsplash.com/photo-1493558103817-58b2924bce98?auto=format&fit=crop&w=1920&q=80'];
+    const bgEl=document.getElementById('bg');
+    const applyBackground=url=>{bgEl.style.backgroundImage=`url(${url})`};
     applyBackground(backgrounds[0]);
-
-    document.getElementById('setBgToday').addEventListener('click', () => {
-      const hour = new Date().getHours();
-      const pick = hour >= 5 && hour <= 11 ? 2 : hour >= 12 && hour <= 16 ? 0 : hour >= 17 && hour <= 20 ? 3 : 4;
-      applyBackground(backgrounds[pick]);
+    document.getElementById('setBgToday').addEventListener('click',()=>{const hour=new Date().getHours();const pick=hour>=5&&hour<=11?2:hour>=12&&hour<=16?0:hour>=17&&hour<=20?3:4;applyBackground(backgrounds[pick])});
+    // Музыка: включение/громкость с безопасным автозапуском
+  const audioEl = document.getElementById('bgAudio');
+  const toggleBtn = document.getElementById('musicToggle');
+  const vol = document.getElementById('volume');
+  if (audioEl && vol && toggleBtn){
+    audioEl.volume = parseFloat(vol.value);
+    (async () => { try { await audioEl.play(); } catch(e) {} })();
+    const liftMute = async () => {
+      try { audioEl.muted = false; await audioEl.play(); toggleBtn.textContent = '⏸ Пауза'; } catch(e) {}
+      document.removeEventListener('click', liftMute);
+      document.removeEventListener('touchstart', liftMute);
+    };
+    document.addEventListener('click', liftMute, { once: true });
+    document.addEventListener('touchstart', liftMute, { once: true });
+    toggleBtn.addEventListener('click', async () => {
+      if (audioEl.paused) { audioEl.muted = false; await audioEl.play(); toggleBtn.textContent = '⏸ Пауза'; }
+      else { audioEl.pause(); toggleBtn.textContent = '▶ Музыка'; }
     });
-  </script>
+    vol.addEventListener('input', e => { audioEl.volume = parseFloat(e.target.value); });
+  }
+</script>
 </body>
 </html>
