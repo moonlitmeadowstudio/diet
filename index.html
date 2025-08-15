@@ -144,7 +144,7 @@
           </div>
           <div class="controls">
             <button id="setBgToday" class="btn" type="button">Сделать фон «сегодняшнего настроения»</button>
-             <button id="musicToggle" class="btn-ghost" type="button">▶ Музыка</button>
+             <button id="musicToggle" type="button">▶ Музыка</button>
           </div>
         </div>
       </div>
@@ -188,10 +188,14 @@
   });
    const musicBtn = document.getElementById('musicToggle');
     const audio = document.getElementById('bgAudio');
-    musicBtn.addEventListener('click', async () => {
+   musicBtn.addEventListener('click', async () => {
       if (audio.paused) {
-        await audio.play();
-        musicBtn.textContent = '⏸ Пауза';
+        try {
+          await audio.play();
+          musicBtn.textContent = '⏸ Пауза';
+        } catch (err) {
+          console.log('Автовоспроизведение заблокировано, требуется клик пользователем');
+        }
       } else {
         audio.pause();
         musicBtn.textContent = '▶ Музыка';
