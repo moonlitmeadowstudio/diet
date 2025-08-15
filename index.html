@@ -185,6 +185,17 @@
       : 4;                            // ночь – домики у воды
     applyBackground(backgrounds[pick]);
   });
+   const musicBtn = document.getElementById('musicToggle');
+    const audio = document.getElementById('bgAudio');
+    musicBtn.addEventListener('click', async () => {
+      if (audio.paused) {
+        await audio.play();
+        musicBtn.textContent = '⏸ Пауза';
+      } else {
+        audio.pause();
+        musicBtn.textContent = '▶ Музыка';
+      }
+    });
 </script>
 
 </body>
