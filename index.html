@@ -1,166 +1,212 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Рацион на неделю</title>
-<style>
-    body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background: linear-gradient(135deg, #f8f9fa, #dee2e6);
-        color: #212529;
-        padding: 10px;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>В ожидании отпуска</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg-blur: 6px;
+      --glass-bg: rgba(255,255,255,.14);
+      --glass-stroke: rgba(255,255,255,.3);
+      --accent: #00d4ff;
+      --accent-2: #00ffa3;
+      --text: #0b1220;
     }
-    h1 {
-        text-align: center;
-        font-size: 28px;
-        background: linear-gradient(90deg, #0077b6, #00b4d8);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:"Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--text);
+      background: #0b1220;
     }
-    .tabs {
-        text-align: center;
-        margin-bottom: 15px;
+    .bg{
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background-position:center;
+      background-size:cover;
+      background-attachment: fixed;
+      transition: background-image .6s ease-in-out;
+      filter: saturate(1.05) contrast(1.05);
     }
-    .tab-button {
-        background-color: #a8dadc;
-        border: none;
-        padding: 8px 15px;
-        margin: 2px;
-        border-radius: 5px;
-        cursor: pointer;
+    .bg::after{
+      content:"";
+      position:absolute; inset:0;
+      background: radial-gradient(80% 60% at 50% 20%, rgba(255,255,255,.18) 0%, rgba(255,255,255,.05) 40%, rgba(0,0,0,.55) 100%),
+                  linear-gradient(180deg, rgba(0,0,0,.05) 0%, rgba(0,0,0,.55) 100%);
     }
-    .tab-button:hover {
-        background-color: #48cae4;
-    }
-    .tab-content { display: none; animation: fadeIn 1s; }
-    .active { display: block; }
+    .noise{position:fixed; inset:0; z-index:-1; opacity:.04; pointer-events:none; background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23n)" opacity=".6"/></svg>'); mix-blend-mode:overlay}
 
-    /* Таблица */
-    .table-wrapper { overflow-x: auto; }
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        min-width: 800px;
+    header{
+      position:fixed; top:0; left:0; right:0; z-index:10;
+      display:flex; align-items:center; justify-content:space-between;
+      padding:16px 24px;
+      backdrop-filter: blur(var(--bg-blur));
+      -webkit-backdrop-filter: blur(var(--bg-blur));
+      background: linear-gradient(180deg, rgba(255,255,255,.22), rgba(255,255,255,.06));
+      border-bottom:1px solid var(--glass-stroke);
     }
-    th, td {
-        border: 1px solid #ccc;
-        padding: 8px;
-        text-align: center;
-    }
-    th { background-color: #caf0f8; }
+    .brand{display:flex; gap:10px; align-items:center; font-weight:800; letter-spacing:.4px}
+    .logo{width:36px; height:36px; border-radius:12px; background: linear-gradient(135deg, var(--accent), var(--accent-2)); box-shadow:0 6px 24px rgba(0, 212, 255, .35)}
 
-    /* Карточки */
-    .cards { display: none; }
-    .card {
-        border-radius: 8px;
-        padding: 10px;
-        margin-bottom: 10px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        animation: fadeIn 1s;
+    .wrap{min-height:100dvh; display:grid; place-items:center; padding:120px 20px 40px}
+    .card{
+      width:min(980px, 96vw);
+      padding:30px;
+      border-radius:28px;
+      background: linear-gradient(180deg, rgba(255,255,255,.28), rgba(255,255,255,.12));
+      border:1px solid var(--glass-stroke);
+      box-shadow: 0 20px 80px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.25);
+      backdrop-filter: blur(calc(var(--bg-blur) + 5px));
+      -webkit-backdrop-filter: blur(calc(var(--bg-blur) + 5px));
     }
-    .meal-title { font-weight: bold; font-size: 16px; }
-    .meal-info { margin-top: 5px; }
-    .breakfast { background-color: #ffeebb; }
-    .snack { background-color: #ffd6a5; }
-    .lunch { background-color: #caffbf; }
-    .afternoon { background-color: #9bf6ff; }
-    .dinner { background-color: #bdb2ff; }
+    h1{margin:0 0 8px; font-size: clamp(28px, 6vw, 62px); line-height:1.05; letter-spacing: -.5px}
+    .sub{font-size: clamp(14px, 2.5vw, 18px); opacity:.9; margin-bottom:20px}
 
-    .nav-buttons {
-        text-align: center;
-        margin-top: 15px;
+    .timer-box{
+      display:grid; gap:18px; align-items:center;
+      grid-template-columns: 1fr;
     }
-    .nav-button {
-        background-color: #00b4d8;
-        color: #fff;
-        border: none;
-        padding: 8px 15px;
-        margin: 5px;
-        border-radius: 5px;
-        cursor: pointer;
+    .meta{
+      display:flex; flex-wrap:wrap; gap:12px; align-items:center; font-size:14px;
     }
-    .nav-button:hover { background-color: #0096c7; }
+    .chip{padding:8px 12px; border-radius:999px; background: rgba(255,255,255,.4); border:1px solid var(--glass-stroke)}
 
-    @keyframes fadeIn {
-        from {opacity: 0; transform: translateY(10px);}
-        to {opacity: 1; transform: translateY(0);}
+    .controls{display:flex; flex-wrap:wrap; gap:10px; margin-top:14px}
+    .btn{
+      appearance:none; border:0; cursor:pointer; padding:12px 16px; border-radius:12px; font-weight:600;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow: 0 10px 26px rgba(0, 212, 255, .35);
     }
+    .btn-ghost{background: rgba(255,255,255,.5); border:1px solid var(--glass-stroke); box-shadow:none}
 
-    @media (min-width: 769px) {
-        .table-wrapper { display: block; }
-        .cards { display: none; }
+    .sections{display:grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap:16px; margin-top:24px}
+    .sec{padding:18px; border-radius:18px; background: rgba(255,255,255,.5); border:1px solid var(--glass-stroke)}
+    .sec h3{margin:0 0 8px}
+
+    footer{margin-top:28px; text-align:center; font-size:12px; opacity:.8}
+
+    /* Megatimer default container style (optional): */
+    .timer-embed{min-height:120px; display:grid; place-items:center; border-radius:16px; border:1px dashed rgba(255,255,255,.45); background: rgba(255,255,255,.35)}
+
+    @media (min-width: 880px){
+      .timer-box{grid-template-columns: 1.2fr .8fr}
     }
-    @media (max-width: 768px) {
-        .table-wrapper { display: none; }
-        .cards { display: block; }
-    }
-</style>
+  </style>
 </head>
 <body>
-<h1>Рацион на неделю</h1>
-<div class="tabs">
-<button class="tab-button" onclick="openDay(1)">День 1</button><button class="tab-button" onclick="openDay(2)">День 2</button><button class="tab-button" onclick="openDay(3)">День 3</button><button class="tab-button" onclick="openDay(4)">День 4</button><button class="tab-button" onclick="openDay(5)">День 5</button><button class="tab-button" onclick="openDay(6)">День 6</button><button class="tab-button" onclick="openDay(7)">День 7</button></div><div id='day1' class='tab-content'><div class='table-wrapper'><table><thead>
-    <tr><th>🍽 Прием пищи</th><th>Блюдо</th><th>Продукт</th><th>Вес девушка</th><th>Ккал девушка</th><th>Вес парень</th><th>Ккал парень</th></tr>
-    </thead><tbody><tr><td>Завтрак</td><td>Омлет с овощами и хлебом</td><td>Яйца</td><td>123</td><td>172</td><td>158</td><td>221</td></tr><tr><td>Завтрак</td><td>Омлет с овощами и хлебом</td><td>Сыр</td><td>25</td><td>74</td><td>32</td><td>95</td></tr><tr><td>Завтрак</td><td>Омлет с овощами и хлебом</td><td>Овощи</td><td>184</td><td>37</td><td>210</td><td>42</td></tr><tr><td>Завтрак</td><td>Омлет с овощами и хлебом</td><td>Хлеб цельнозерн.</td><td>37</td><td>86</td><td>53</td><td>121</td></tr><tr><td>Перекус</td><td>Йогурт + миндаль</td><td>Йогурт 2%</td><td>184</td><td>104</td><td>210</td><td>121</td></tr><tr><td>Перекус</td><td>Йогурт + миндаль</td><td>Миндаль</td><td>12</td><td>74</td><td>16</td><td>95</td></tr><tr><td>Обед</td><td>Курица + гречка + овощи</td><td>Куриная грудка</td><td>147</td><td>159</td><td>179</td><td>194</td></tr><tr><td>Обед</td><td>Курица + гречка + овощи</td><td>Гречка</td><td>98</td><td>116</td><td>116</td><td>137</td></tr><tr><td>Обед</td><td>Курица + гречка + овощи</td><td>Овощи</td><td>245</td><td>49</td><td>263</td><td>53</td></tr><tr><td>Обед</td><td>Курица + гречка + овощи</td><td>Масло</td><td>6</td><td>55</td><td>7</td><td>66</td></tr><tr><td>Полдник</td><td>Банан + протеин</td><td>Банан</td><td>123</td><td>110</td><td>126</td><td>116</td></tr><tr><td>Полдник</td><td>Банан + протеин</td><td>Протеин</td><td>25</td><td>98</td><td>32</td><td>126</td></tr><tr><td>Ужин</td><td>Лосось + картофель + брокколи</td><td>Лосось</td><td>147</td><td>245</td><td>168</td><td>284</td></tr><tr><td>Ужин</td><td>Лосось + картофель + брокколи</td><td>Картофель</td><td>184</td><td>141</td><td>210</td><td>158</td></tr><tr><td>Ужин</td><td>Лосось + картофель + брокколи</td><td>Брокколи</td><td>245</td><td>74</td><td>263</td><td>79</td></tr><tr><td>Ужин</td><td>Лосось + картофель + брокколи</td><td>Масло</td><td>6</td><td>55</td><td>7</td><td>66</td></tr><tr><td colspan='4'><b>Итого ккал</b></td><td>1649</td><td></td><td>1974</td></tr><tr><td colspan='7'><b>БЖУ за день:</b> Девушка: белки 145.3 г | жиры 56.6 г | углеводы 160.9 г. Парень: белки 174.4 г | жиры 69.3 г | углеводы 182.2 г.</td></tr></tbody></table></div><div class='cards'><div class='card breakfast'><div class='meal-title'>🍳 Завтрак</div><div class='meal-info'>🔹 <b>Яйца</b>: девушка — 123 г (172 ккал), парень — 158 г (221 ккал)</div><div class='meal-info'>🔹 <b>Сыр</b>: девушка — 25 г (74 ккал), парень — 32 г (95 ккал)</div><div class='meal-info'>🔹 <b>Овощи</b>: девушка — 184 г (37 ккал), парень — 210 г (42 ккал)</div><div class='meal-info'>🔹 <b>Хлеб цельнозерн.</b>: девушка — 37 г (86 ккал), парень — 53 г (121 ккал)</div><div class='meal-info'><b>Итого Ккал:</b> девушка — 369 ккал, парень — 479 ккал</div></div><div class='card snack'><div class='meal-title'>🥛 Перекус</div><div class='meal-info'>🔹 <b>Йогурт 2%</b>: девушка — 184 г (104 ккал), парень — 210 г (121 ккал)</div><div class='meal-info'>🔹 <b>Миндаль</b>: девушка — 12 г (74 ккал), парень — 16 г (95 ккал)</div><div class='meal-info'><b>Итого Ккал:</b> девушка — 178 ккал, парень — 216 ккал</div></div><div class='card lunch'><div class='meal-title'>🍗 Обед</div><div class='meal-info'>🔹 <b>Куриная грудка</b>: девушка — 147 г (159 ккал), парень — 179 г (194 ккал)</div><div class='meal-info'>🔹 <b>Гречка</b>: девушка — 98 г (116 ккал), парень — 116 г (137 ккал)</div><div class='meal-info'>🔹 <b>Овощи</b>: девушка — 245 г (49 ккал), парень — 263 г (53 ккал)</div><div class='meal-info'>🔹 <b>Масло</b>: девушка — 6 г (55 ккал), парень — 7 г (66 ккал)</div><div class='meal-info'><b>Итого Ккал:</b> девушка — 379 ккал, парень — 450 ккал</div></div><div class='card afternoon'><div class='meal-title'>🍏 Полдник</div><div class='meal-info'>🔹 <b>Банан</b>: девушка — 123 г (110 ккал), парень — 126 г (116 ккал)</div><div class='meal-info'>🔹 <b>Протеин</b>: девушка — 25 г (98 ккал), парень — 32 г (126 ккал)</div><div class='meal-info'><b>Итого Ккал:</b> девушка — 208 ккал, парень — 242 ккал</div></div><div class='card dinner'><div class='meal-title'>🍽 Ужин</div><div class='meal-info'>🔹 <b>Лосось</b>: девушка — 147 г (245 ккал), парень — 168 г (284 ккал)</div><div class='meal-info'>🔹 <b>Картофель</b>: девушка — 184 г (141 ккал), парень — 210 г (158 ккал)</div><div class='meal-info'>🔹 <b>Брокколи</b>: девушка — 245 г (74 ккал), парень — 263 г (79 ккал)</div><div class='meal-info'>🔹 <b>Масло</b>: девушка — 6 г (55 ккал), парень — 7 г (66 ккал)</div><div class='meal-info'><b>Итого Ккал:</b> девушка — 515 ккал, парень — 587 ккал</div></div><div class='card' style='background-color:#e0e0e0'><b>БЖУ за день</b><br>Девушка: белки 145.3 г | жиры 56.6 г | углеводы 160.9 г<br>Парень: белки 174.4 г | жиры 69.3 г | углеводы 182.2 г</div></div>
-    <div class="nav-buttons">
-        <button class="nav-button" onclick="openDay(7)">⬅ Предыдущий день</button>
-        <button class="nav-button" onclick="openDay(2)">Следующий день ➡</button>
-    </div>
-    </div><div id='day2' class='tab-content'><div class='table-wrapper'><table><thead>
-    <tr><th>🍽 Прием пищи</th><th>Блюдо</th><th>Продукт</th><th>Вес девушка</th><th>Ккал девушка</th><th>Вес парень</th><th>Ккал парень</th></tr>
-    </thead><tbody><tr><td>Завтрак</td><td>Овсянка с ягодами и творогом</td><td>Овсянка</td><td>49</td><td>184</td><td>63</td><td>236</td></tr><tr><td>Завтрак</td><td>Овсянка с ягодами и творогом</td><td>Ягоды</td><td>61</td><td>31</td><td>74</td><td>37</td></tr><tr><td>Завтрак</td><td>Овсянка с ягодами и творогом</td><td>Мёд</td><td>6</td><td>18</td><td>11</td><td>32</td></tr><tr><td>Завтрак</td><td>Овсянка с ягодами и творогом</td><td>Творог 5%</td><td>123</td><td>123</td><td>158</td><td>158</td></tr><tr><td>Перекус</td><td>Йогурт + орехи</td><td>Йогурт 2%</td><td>184</td><td>104</td><td>210</td><td>121</td></tr><tr><td>Перекус</td><td>Йогурт + орехи</td><td>Грецкие орехи</td><td>12</td><td>74</td><td>16</td><td>95</td></tr><tr><td>Обед</td><td>Говядина + рис + овощи</td><td>Говядина</td><td>147</td><td>196</td><td>179</td><td>242</td></tr><tr><td>Обед</td><td>Говядина + рис + овощи</td><td>Рис</td><td>98</td><td>135</td><td>116</td><td>158</td></tr><tr><td>Обед</td><td>Говядина + рис + овощи</td><td>Овощи</td><td>245</td><td>49</td><td>263</td><td>53</td></tr><tr><td>Обед</td><td>Говядина + рис + овощи</td><td>Масло</td><td>6</td><td>55</td><td>7</td><td>66</td></tr><tr><td>Полдник</td><td>Яблоко + протеин</td><td>Яблоко</td><td>184</td><td>92</td><td>210</td><td>105</td></tr><tr><td>Полдник</td><td>Яблоко + протеин</td><td>Протеин</td><td>25</td><td>98</td><td>32</td><td>126</td></tr><tr><td>Ужин</td><td>Треска + картофель + салат</td><td>Треска</td><td>184</td><td>147</td><td>210</td><td>168</td></tr><tr><td>Ужин</td><td>Треска + картофель + салат</td><td>Картофель</td><td>184</td><td>141</td><td>210</td><td>158</td></tr><tr><td>Ужин</td><td>Треска + картофель + салат</td><td>Салат овощной</td><td>245</td><td>49</td><td>263</td><td>53</td></tr><tr><td>Ужин</td><td>Треска + картофель + салат</td><td>Масло</td><td>6</td><td>55</td><td>7</td><td>66</td></tr><tr><td colspan='4'><b>Итого ккал</b></td><td>1551</td><td></td><td>1874</td></tr><tr><td colspan='7'><b>БЖУ за день:</b> Девушка: белки 130.6 г | жиры 43.8 г | углеводы 146.0 г. Парень: белки 157.2 г | жиры 54.3 г | углеводы 172.7 г.</td></tr></tbody></table></div><div class='cards'><div class='card breakfast'><div class='meal-title'>🍳 Завтрак</div><div class='meal-info'>🔹 <b>Овсянка</b>: девушка — 49 г (184 ккал), парень — 63 г (236 ккал)</div><div class='meal-info'>🔹 <b>Ягоды</b>: девушка — 61 г (31 ккал), парень — 74 г (37 ккал)</div><div class='meal-info'>🔹 <b>Мёд</b>: девушка — 6 г (18 ккал), парень — 11 г (32 ккал)</div><div class='meal-info'>🔹 <b>Творог 5%</b>: девушка — 123 г (123 ккал), парень — 158 г (158 ккал)</div><div class='meal-info'><b>Итого Ккал:</b> девушка — 356 ккал, парень — 463 ккал</div></div><div class='card snack'><div class='meal-title'>🥛 Перекус</div><div class='meal-info'>🔹 <b>Йогурт 2%</b>: девушка — 184 г (104 ккал), парень — 210 г (121 ккал)</div><div class='meal-info'>🔹 <b>Грецкие орехи</b>: девушка — 12 г (74 ккал), парень — 16 г (95 ккал)</div><div class='meal-info'><b>Итого Ккал:</b> девушка — 178 ккал, парень — 216 ккал</div></div><div class='card lunch'><div class='meal-title'>🍗 Обед</div><div class='meal-info'>🔹 <b>Говядина</b>: девушка — 147 г (196 ккал), парень — 179 г (242 ккал)</div><div class='meal-info'>🔹 <b>Рис</b>: девушка — 98 г (135 ккал), парень — 116 г (158 ккал)</div><div class='meal-info'>🔹 <b>Овощи</b>: девушка — 245 г (49 ккал), парень — 263 г (53 ккал)</div><div class='meal-info'>🔹 <b>Масло</b>: девушка — 6 г (55 ккал), парень — 7 г (66 ккал)</div><div class='meal-info'><b>Итого Ккал:</b> девушка — 435 ккал, парень — 519 ккал</div></div><div class='card afternoon'><div class='meal-title'>🍏 Полдник</div><div class='meal-info'>🔹 <b>Яблоко</b>: девушка — 184 г (92 ккал), парень — 210 г (105 ккал)</div><div class='meal-info'>🔹 <b>Протеин</b>: девушка — 25 г (98 ккал), парень — 32 г (126 ккал)</div><div class='meal-info'><b>Итого Ккал:</b> девушка — 190 ккал, парень — 231 ккал</div></div><div class='card dinner'><div class='meal-title'>🍽 Ужин</div><div class='meal-info'>🔹 <b>Треска</b>: девушка — 184 г (147 ккал), парень — 210 г (168 ккал)</div><div class='meal-info'>🔹 <b>Картофель</b>: девушка — 184 г (141 ккал), парень — 210 г (158 ккал)</div><div class='meal-info'>🔹 <b>Салат овощной</b>: девушка — 245 г (49 ккал), парень — 263 г (53 ккал)</div><div class='meal-info'>🔹 <b>Масло</b>: девушка — 6 г (55 ккал), парень — 7 г (66 ккал)</div><div class='meal-info'><b>Итого Ккал:</b> девушка — 392 ккал, парень — 445 ккал</div></div><div class='card' style='background-color:#e0e0e0'><b>БЖУ за день</b><br>Девушка: белки 130.6 г | жиры 43.8 г | углеводы 146.0 г<br>Парень: белки 157.2 г | жиры 54.3 г | углеводы 172.7 г</div></div>
-    <div class="nav-buttons">
-        <button class="nav-button" onclick="openDay(1)">⬅ Предыдущий день</button>
-        <button class="nav-button" onclick="openDay(3)">Следующий день ➡</button>
-    </div>
-    </div><div id='day3' class='tab-content'><div class='table-wrapper'><table><thead>
-    <tr><th>🍽 Прием пищи</th><th>Блюдо</th><th>Продукт</th><th>Вес девушка</th><th>Ккал девушка</th><th>Вес парень</th><th>Ккал парень</th></tr>
-    </thead><tbody><tr><td>Завтрак</td><td>Гречка с яйцом и огурцами</td><td>Гречка</td><td>98</td><td>116</td><td>116</td><td>137</td></tr><tr><td>Завтрак</td><td>Гречка с яйцом и огурцами</td><td>Яйца</td><td>123</td><td>172</td><td>158</td><td>221</td></tr><tr><td>Завтрак</td><td>Гречка с яйцом и огурцами</td><td>Огурцы</td><td>184</td><td>25</td><td>210</td><td>26</td></tr><tr><td>Перекус</td><td>Творог + мёд + орехи</td><td>Творог 5%</td><td>184</td><td>166</td><td>210</td><td>189</td></tr><tr><td>Перекус</td><td>Творог + мёд + орехи</td><td>Мёд</td><td>6</td><td>18</td><td>11</td><td>32</td></tr><tr><td>Перекус</td><td>Творог + мёд + орехи</td><td>Орехи</td><td>12</td><td>74</td><td>16</td><td>95</td></tr><tr><td>Обед</td><td>Индейка + булгур + овощи</td><td>Индейка</td><td>159</td><td>172</td><td>189</td><td>205</td></tr><tr><td>Обед</td><td>Индейка + булгур + овощи</td><td>Булгур</td><td>98</td><td>123</td><td>116</td><td>147</td></tr><tr><td>Обед</td><td>Индейка + булгур + овощи</td><td>Овощи</td><td>245</td><td>49</td><td>263</td><td>53</td></tr><tr><td>Обед</td><td>Индейка + булгур + овощи</td><td>Масло</td><td>6</td><td>55</td><td>7</td><td>66</td></tr><tr><td>Полдник</td><td>Груша + протеин</td><td>Груша</td><td>184</td><td>98</td><td>210</td><td>116</td></tr><tr><td>Полдник</td><td>Груша + протеин</td><td>Протеин</td><td>25</td><td>98</td><td>32</td><td>126</td></tr><tr><td>Ужин</td><td>Курица + картофель + салат</td><td>Куриная грудка</td><td>172</td><td>190</td><td>189</td><td>210</td></tr><tr><td>Ужин</td><td>Курица + картофель + салат</td><td>Картофель</td><td>184</td><td>141</td><td>210</td><td>158</td></tr><tr><td>Ужин</td><td>Курица + картофель + салат</td><td>Салат овощной</td><td>245</td><td>49</td><td>263</td><td>53</td></tr><tr><td>Ужин</td><td>Курица + картофель + салат</td><td>Масло</td><td>6</td><td>55</td><td>7</td><td>66</td></tr><tr><td colspan='4'><b>Итого ккал</b></td><td>1601</td><td></td><td>1900</td></tr><tr><td colspan='7'><b>БЖУ за день:</b> Девушка: белки 174.9 г | жиры 47.2 г | углеводы 221.3 г. Парень: белки 205.2 г | жиры 57.9 г | углеводы 260.8 г.</td></tr></tbody></table></div><div class='cards'><div class='card breakfast'><div class='meal-title'>🍳 Завтрак</div><div class='meal-info'>🔹 <b>Гречка</b>: девушка — 98 г (116 ккал), парень — 116 г (137 ккал)</div><div class='meal-info'>🔹 <b>Яйца</b>: девушка — 123 г (172 ккал), парень — 158 г (221 ккал)</div><div class='meal-info'>🔹 <b>Огурцы</b>: девушка — 184 г (25 ккал), парень — 210 г (26 ккал)</div><div class='meal-info'><b>Итого Ккал:</b> девушка — 313 ккал, парень — 384 ккал</div></div><div class='card snack'><div class='meal-title'>🥛 Перекус</div><div class='meal-info'>🔹 <b>Творог 5%</b>: девушка — 184 г (166 ккал), парень — 210 г (189 ккал)</div><div class='meal-info'>🔹 <b>Мёд</b>: девушка — 6 г (18 ккал), парень — 11 г (32 ккал)</div><div class='meal-info'>🔹 <b>Орехи</b>: девушка — 12 г (74 ккал), парень — 16 г (95 ккал)</div><div class='meal-info'><b>Итого Ккал:</b> девушка — 258 ккал, парень — 316 ккал</div></div><div class='card lunch'><div class='meal-title'>🍗 Обед</div><div class='meal-info'>🔹 <b>Индейка</b>: девушка — 159 г (172 ккал), парень — 189 г (205 ккал)</div><div class='meal-info'>🔹 <b>Булгур</b>: девушка — 98 г (123 ккал), парень — 116 г (147 ккал)</div><div class='meal-info'>🔹 <b>Овощи</b>: девушка — 245 г (49 ккал), парень — 263 г (53 ккал)</div><div class='meal-info'>🔹 <b>Масло</b>: девушка — 6 г (55 ккал), парень — 7 г (66 ккал)</div><div class='meal-info'><b>Итого Ккал:</b> девушка — 399 ккал, парень — 471 ккал</div></div><div class='card afternoon'><div class='meal-title'>🍏 Полдник</div><div class='meal-info'>🔹 <b>Груша</b>: девушка — 184 г (98 ккал), парень — 210 г (116 ккал)</div><div class='meal-info'>🔹 <b>Протеин</b>: девушка — 25 г (98 ккал), парень — 32 г (126 ккал)</div><div class='meal-info'><b>Итого Ккал:</b> девушка — 196 ккал, парень — 242 ккал</div></div><div class='card dinner'><div class='meal-title'>🍽 Ужин</div><div class='meal-info'>🔹 <b>Куриная грудка</b>: девушка — 172 г (190 ккал), парень — 189 г (210 ккал)</div><div class='meal-info'>🔹 <b>Картофель</b>: девушка — 184 г (141 ккал), парень — 210 г (158 ккал)</div><div class='meal-info'>🔹 <b>Салат овощной</b>: девушка — 245 г (49 ккал), парень — 263 г (53 ккал)</div><div class='meal-info'>🔹 <b>Масло</b>: девушка — 6 г (55 ккал), парень — 7 г (66 ккал)</div><div class='meal-info'><b>Итого Ккал:</b> девушка — 435 ккал, парень — 487 ккал</div></div><div class='card' style='background-color:#e0e0e0'><b>БЖУ за день</b><br>Девушка: белки 174.9 г | жиры 47.2 г | углеводы 221.3 г<br>Парень: белки 205.2 г | жиры 57.9 г | углеводы 260.8 г</div></div>
-    <div class="nav-buttons">
-        <button class="nav-button" onclick="openDay(2)">⬅ Предыдущий день</button>
-        <button class="nav-button" onclick="openDay(4)">Следующий день ➡</button>
-    </div>
-    </div><div id='day4' class='tab-content'><div class='table-wrapper'><table><thead>
-    <tr><th>🍽 Прием пищи</th><th>Блюдо</th><th>Продукт</th><th>Вес девушка</th><th>Ккал девушка</th><th>Вес парень</th><th>Ккал парень</th></tr>
-    </thead><tbody><tr><td>Завтрак</td><td>Тост с авокадо и яйцом</td><td>Хлеб цельнозерновой</td><td>49</td><td>110</td><td>63</td><td>142</td></tr><tr><td>Завтрак</td><td>Тост с авокадо и яйцом</td><td>Авокадо</td><td>61</td><td>98</td><td>74</td><td>118</td></tr><tr><td>Завтрак</td><td>Тост с авокадо и яйцом</td><td>Яйцо</td><td>123</td><td>172</td><td>158</td><td>221</td></tr><tr><td>Перекус</td><td>Греческий йогурт + орехи</td><td>Йогурт 2%</td><td>184</td><td>104</td><td>210</td><td>121</td></tr><tr><td>Перекус</td><td>Грецкие орехи</td><td>Орехи</td><td>12</td><td>74</td><td>16</td><td>95</td></tr><tr><td>Обед</td><td>Курица + картофель + овощи</td><td>Куриная грудка</td><td>172</td><td>190</td><td>189</td><td>210</td></tr><tr><td>Обед</td><td>Курица + картофель + овощи</td><td>Картофель</td><td>184</td><td>141</td><td>210</td><td>158</td></tr><tr><td>Обед</td><td>Курица + картофель + овощи</td><td>Овощи</td><td>245</td><td>49</td><td>263</td><td>53</td></tr><tr><td>Обед</td><td>Курица + картофель + овощи</td><td>Масло</td><td>6</td><td>55</td><td>7</td><td>66</td></tr><tr><td>Полдник</td><td>Яблоко + протеин</td><td>Яблоко</td><td>184</td><td>92</td><td>210</td><td>105</td></tr><tr><td>Полдник</td><td>Яблоко + протеин</td><td>Протеин</td><td>25</td><td>98</td><td>32</td><td>126</td></tr><tr><td>Ужин</td><td>Треска + булгур + овощи</td><td>Треска</td><td>184</td><td>147</td><td>210</td><td>168</td></tr><tr><td>Ужин</td><td>Треска + булгур + овощи</td><td>Булгур</td><td>98</td><td>123</td><td>116</td><td>147</td></tr><tr><td>Ужин</td><td>Треска + булгур + овощи</td><td>Овощи</td><td>245</td><td>49</td><td>263</td><td>53</td></tr><tr><td>Ужин</td><td>Треска + булгур + овощи</td><td>Масло</td><td>6</td><td>55</td><td>7</td><td>66</td></tr><tr><td>Перекус</td><td>Греческий йогурт + орехи</td><td>Грецкие орехи</td><td>12</td><td>74</td><td>16</td><td>95</td></tr><tr><td colspan='4'><b>Итого ккал</b></td><td>1631</td><td></td><td>1944</td></tr><tr><td colspan='7'><b>БЖУ за день:</b> Девушка: белки 132.1 г | жиры 36.6 г | углеводы 157.6 г. Парень: белки 153.3 г | жиры 45.5 г | углеводы 185.5 г.</td></tr></tbody></table></div><div class='cards'><div class='card breakfast'><div class='meal-title'>🍳 Завтрак</div><div class='meal-info'>🔹 <b>Хлеб цельнозерновой</b>: девушка — 49 г (110 ккал), парень — 63 г (142 ккал)</div><div class='meal-info'>🔹 <b>Авокадо</b>: девушка — 61 г (98 ккал), парень — 74 г (118 ккал)</div><div class='meal-info'>🔹 <b>Яйцо</b>: девушка — 123 г (172 ккал), парень — 158 г (221 ккал)</div><div class='meal-info'><b>Итого Ккал:</b> девушка — 380 ккал, парень — 481 ккал</div></div><div class='card snack'><div class='meal-title'>🥛 Перекус</div><div class='meal-info'>🔹 <b>Йогурт 2%</b>: девушка — 184 г (104 ккал), парень — 210 г (121 ккал)</div><div class='meal-info'>🔹 <b>Орехи</b>: девушка — 12 г (74 ккал), парень — 16 г (95 ккал)</div><div class='meal-info'>🔹 <b>Грецкие орехи</b>: девушка — 12 г (74 ккал), парень — 16 г (95 ккал)</div><div class='meal-info'><b>Итого Ккал:</b> девушка — 252 ккал, парень — 311 ккал</div></div><div class='card lunch'><div class='meal-title'>🍗 Обед</div><div class='meal-info'>🔹 <b>Куриная грудка</b>: девушка — 172 г (190 ккал), парень — 189 г (210 ккал)</div><div class='meal-info'>🔹 <b>Картофель</b>: девушка — 184 г (141 ккал), парень — 210 г (158 ккал)</div><div class='meal-info'>🔹 <b>Овощи</b>: девушка — 245 г (49 ккал), парень — 263 г (53 ккал)</div><div class='meal-info'>🔹 <b>Масло</b>: девушка — 6 г (55 ккал), парень — 7 г (66 ккал)</div><div class='meal-info'><b>Итого Ккал:</b> девушка — 435 ккал, парень — 487 ккал</div></div><div class='card afternoon'><div class='meal-title'>🍏 Полдник</div><div class='meal-info'>🔹 <b>Яблоко</b>: девушка — 184 г (92 ккал), парень — 210 г (105 ккал)</div><div class='meal-info'>🔹 <b>Протеин</b>: девушка — 25 г (98 ккал), парень — 32 г (126 ккал)</div><div class='meal-info'><b>Итого Ккал:</b> девушка — 190 ккал, парень — 231 ккал</div></div><div class='card dinner'><div class='meal-title'>🍽 Ужин</div><div class='meal-info'>🔹 <b>Треска</b>: девушка — 184 г (147 ккал), парень — 210 г (168 ккал)</div><div class='meal-info'>🔹 <b>Булгур</b>: девушка — 98 г (123 ккал), парень — 116 г (147 ккал)</div><div class='meal-info'>🔹 <b>Овощи</b>: девушка — 245 г (49 ккал), парень — 263 г (53 ккал)</div><div class='meal-info'>🔹 <b>Масло</b>: девушка — 6 г (55 ккал), парень — 7 г (66 ккал)</div><div class='meal-info'><b>Итого Ккал:</b> девушка — 374 ккал, парень — 434 ккал</div></div><div class='card' style='background-color:#e0e0e0'><b>БЖУ за день</b><br>Девушка: белки 132.1 г | жиры 36.6 г | углеводы 157.6 г<br>Парень: белки 153.3 г | жиры 45.5 г | углеводы 185.5 г</div></div>
-    <div class="nav-buttons">
-        <button class="nav-button" onclick="openDay(3)">⬅ Предыдущий день</button>
-        <button class="nav-button" onclick="openDay(5)">Следующий день ➡</button>
-    </div>
-    </div><div id='day5' class='tab-content'><div class='table-wrapper'><table><thead>
-    <tr><th>🍽 Прием пищи</th><th>Блюдо</th><th>Продукт</th><th>Вес девушка</th><th>Ккал девушка</th><th>Вес парень</th><th>Ккал парень</th></tr>
-    </thead><tbody><tr><td>Завтрак</td><td>Овсянка с орехами и бананом</td><td>Овсянка</td><td>49</td><td>184</td><td>63</td><td>236</td></tr><tr><td>Завтрак</td><td>Овсянка с орехами и бананом</td><td>Банан</td><td>98</td><td>86</td><td>105</td><td>95</td></tr><tr><td>Завтрак</td><td>Овсянка с орехами и бананом</td><td>Орехи</td><td>12</td><td>74</td><td>16</td><td>95</td></tr><tr><td>Перекус</td><td>Творог + мёд</td><td>Творог 5%</td><td>184</td><td>166</td><td>210</td><td>189</td></tr><tr><td>Перекус</td><td>Творог + мёд</td><td>Мёд</td><td>6</td><td>18</td><td>11</td><td>32</td></tr><tr><td>Обед</td><td>Индейка + гречка + овощи</td><td>Индейка</td><td>172</td><td>184</td><td>189</td><td>205</td></tr><tr><td>Обед</td><td>Индейка + гречка + овощи</td><td>Гречка</td><td>98</td><td>116</td><td>116</td><td>137</td></tr><tr><td>Обед</td><td>Индейка + гречка + овощи</td><td>Овощи</td><td>245</td><td>49</td><td>263</td><td>53</td></tr><tr><td>Обед</td><td>Индейка + гречка + овощи</td><td>Масло</td><td>6</td><td>55</td><td>7</td><td>66</td></tr><tr><td>Полдник</td><td>Груша + протеин</td><td>Груша</td><td>184</td><td>98</td><td>210</td><td>116</td></tr><tr><td>Полдник</td><td>Груша + протеин</td><td>Протеин</td><td>25</td><td>98</td><td>32</td><td>126</td></tr><tr><td>Ужин</td><td>Лосось + картофель + брокколи</td><td>Лосось</td><td>147</td><td>245</td><td>168</td><td>284</td></tr><tr><td>Ужин</td><td>Лосось + картофель + брокколи</td><td>Картофель</td><td>184</td><td>141</td><td>210</td><td>158</td></tr><tr><td>Ужин</td><td>Лосось + картофель + брокколи</td><td>Брокколи</td><td>245</td><td>74</td><td>263</td><td>79</td></tr><tr><td>Ужин</td><td>Лосось + картофель + брокколи</td><td>Масло</td><td>6</td><td>55</td><td>7</td><td>66</td></tr><tr><td colspan='4'><b>Итого ккал</b></td><td>1643</td><td></td><td>1937</td></tr><tr><td colspan='7'><b>БЖУ за день:</b> Девушка: белки 145.5 г | жиры 49.2 г | углеводы 175.5 г. Парень: белки 167.3 г | жиры 57.3 г | углеводы 203.7 г.</td></tr></tbody></table></div><div class='cards'><div class='card breakfast'><div class='meal-title'>🍳 Завтрак</div><div class='meal-info'>🔹 <b>Овсянка</b>: девушка — 49 г (184 ккал), парень — 63 г (236 ккал)</div><div class='meal-info'>🔹 <b>Банан</b>: девушка — 98 г (86 ккал), парень — 105 г (95 ккал)</div><div class='meal-info'>🔹 <b>Орехи</b>: девушка — 12 г (74 ккал), парень — 16 г (95 ккал)</div><div class='meal-info'><b>Итого Ккал:</b> девушка — 344 ккал, парень — 426 ккал</div></div><div class='card snack'><div class='meal-title'>🥛 Перекус</div><div class='meal-info'>🔹 <b>Творог 5%</b>: девушка — 184 г (166 ккал), парень — 210 г (189 ккал)</div><div class='meal-info'>🔹 <b>Мёд</b>: девушка — 6 г (18 ккал), парень — 11 г (32 ккал)</div><div class='meal-info'><b>Итого Ккал:</b> девушка — 184 ккал, парень — 221 ккал</div></div><div class='card lunch'><div class='meal-title'>🍗 Обед</div><div class='meal-info'>🔹 <b>Индейка</b>: девушка — 172 г (184 ккал), парень — 189 г (205 ккал)</div><div class='meal-info'>🔹 <b>Гречка</b>: девушка — 98 г (116 ккал), парень — 116 г (137 ккал)</div><div class='meal-info'>🔹 <b>Овощи</b>: девушка — 245 г (49 ккал), парень — 263 г (53 ккал)</div><div class='meal-info'>🔹 <b>Масло</b>: девушка — 6 г (55 ккал), парень — 7 г (66 ккал)</div><div class='meal-info'><b>Итого Ккал:</b> девушка — 404 ккал, парень — 461 ккал</div></div><div class='card afternoon'><div class='meal-title'>🍏 Полдник</div><div class='meal-info'>🔹 <b>Груша</b>: девушка — 184 г (98 ккал), парень — 210 г (116 ккал)</div><div class='meal-info'>🔹 <b>Протеин</b>: девушка — 25 г (98 ккал), парень — 32 г (126 ккал)</div><div class='meal-info'><b>Итого Ккал:</b> девушка — 196 ккал, парень — 242 ккал</div></div><div class='card dinner'><div class='meal-title'>🍽 Ужин</div><div class='meal-info'>🔹 <b>Лосось</b>: девушка — 147 г (245 ккал), парень — 168 г (284 ккал)</div><div class='meal-info'>🔹 <b>Картофель</b>: девушка — 184 г (141 ккал), парень — 210 г (158 ккал)</div><div class='meal-info'>🔹 <b>Брокколи</b>: девушка — 245 г (74 ккал), парень — 263 г (79 ккал)</div><div class='meal-info'>🔹 <b>Масло</b>: девушка — 6 г (55 ккал), парень — 7 г (66 ккал)</div><div class='meal-info'><b>Итого Ккал:</b> девушка — 515 ккал, парень — 587 ккал</div></div><div class='card' style='background-color:#e0e0e0'><b>БЖУ за день</b><br>Девушка: белки 145.5 г | жиры 49.2 г | углеводы 175.5 г<br>Парень: белки 167.3 г | жиры 57.3 г | углеводы 203.7 г</div></div>
-    <div class="nav-buttons">
-        <button class="nav-button" onclick="openDay(4)">⬅ Предыдущий день</button>
-        <button class="nav-button" onclick="openDay(6)">Следующий день ➡</button>
-    </div>
-    </div><div id='day6' class='tab-content'><div class='table-wrapper'><table><thead>
-    <tr><th>🍽 Прием пищи</th><th>Блюдо</th><th>Продукт</th><th>Вес девушка</th><th>Ккал девушка</th><th>Вес парень</th><th>Ккал парень</th></tr>
-    </thead><tbody><tr><td>Завтрак</td><td>Творог + ягоды + мёд</td><td>Творог 5%</td><td>184</td><td>166</td><td>210</td><td>189</td></tr><tr><td>Завтрак</td><td>Творог + ягоды + мёд</td><td>Ягоды</td><td>61</td><td>31</td><td>74</td><td>37</td></tr><tr><td>Завтрак</td><td>Творог + ягоды + мёд</td><td>Мёд</td><td>6</td><td>18</td><td>11</td><td>32</td></tr><tr><td>Перекус</td><td>Йогурт + орехи</td><td>Йогурт 2%</td><td>184</td><td>104</td><td>210</td><td>121</td></tr><tr><td>Перекус</td><td>Йогурт + орехи</td><td>Миндаль</td><td>12</td><td>74</td><td>16</td><td>95</td></tr><tr><td>Обед</td><td>Говядина + рис + овощи</td><td>Говядина</td><td>159</td><td>215</td><td>189</td><td>252</td></tr><tr><td>Обед</td><td>Говядина + рис + овощи</td><td>Рис</td><td>98</td><td>135</td><td>116</td><td>158</td></tr><tr><td>Обед</td><td>Говядина + рис + овощи</td><td>Овощи</td><td>245</td><td>49</td><td>263</td><td>53</td></tr><tr><td>Обед</td><td>Говядина + рис + овощи</td><td>Масло</td><td>6</td><td>55</td><td>7</td><td>66</td></tr><tr><td>Полдник</td><td>Банан + протеин</td><td>Банан</td><td>123</td><td>110</td><td>126</td><td>116</td></tr><tr><td>Полдник</td><td>Банан + протеин</td><td>Протеин</td><td>25</td><td>98</td><td>32</td><td>126</td></tr><tr><td>Ужин</td><td>Курица + булгур + овощи</td><td>Куриная грудка</td><td>172</td><td>190</td><td>189</td><td>210</td></tr><tr><td>Ужин</td><td>Курица + булгур + овощи</td><td>Булгур</td><td>98</td><td>123</td><td>116</td><td>147</td></tr><tr><td>Ужин</td><td>Курица + булгур + овощи</td><td>Овощи</td><td>245</td><td>49</td><td>263</td><td>53</td></tr><tr><td>Ужин</td><td>Курица + булгур + овощи</td><td>Масло</td><td>6</td><td>55</td><td>7</td><td>66</td></tr><tr><td colspan='4'><b>Итого ккал</b></td><td>1472</td><td></td><td>1721</td></tr><tr><td colspan='7'><b>БЖУ за день:</b> Девушка: белки 159.7 г | жиры 49.9 г | углеводы 212.4 г. Парень: белки 185.3 г | жиры 59.4 г | углеводы 247.9 г.</td></tr></tbody></table></div><div class='cards'><div class='card breakfast'><div class='meal-title'>🍳 Завтрак</div><div class='meal-info'>🔹 <b>Творог 5%</b>: девушка — 184 г (166 ккал), парень — 210 г (189 ккал)</div><div class='meal-info'>🔹 <b>Ягоды</b>: девушка — 61 г (31 ккал), парень — 74 г (37 ккал)</div><div class='meal-info'>🔹 <b>Мёд</b>: девушка — 6 г (18 ккал), парень — 11 г (32 ккал)</div><div class='meal-info'><b>Итого Ккал:</b> девушка — 215 ккал, парень — 258 ккал</div></div><div class='card snack'><div class='meal-title'>🥛 Перекус</div><div class='meal-info'>🔹 <b>Йогурт 2%</b>: девушка — 184 г (104 ккал), парень — 210 г (121 ккал)</div><div class='meal-info'>🔹 <b>Миндаль</b>: девушка — 12 г (74 ккал), парень — 16 г (95 ккал)</div><div class='meal-info'><b>Итого Ккал:</b> девушка — 178 ккал, парень — 216 ккал</div></div><div class='card lunch'><div class='meal-title'>🍗 Обед</div><div class='meal-info'>🔹 <b>Говядина</b>: девушка — 159 г (215 ккал), парень — 189 г (252 ккал)</div><div class='meal-info'>🔹 <b>Рис</b>: девушка — 98 г (135 ккал), парень — 116 г (158 ккал)</div><div class='meal-info'>🔹 <b>Овощи</b>: девушка — 245 г (49 ккал), парень — 263 г (53 ккал)</div><div class='meal-info'>🔹 <b>Масло</b>: девушка — 6 г (55 ккал), парень — 7 г (66 ккал)</div><div class='meal-info'><b>Итого Ккал:</b> девушка — 454 ккал, парень — 529 ккал</div></div><div class='card afternoon'><div class='meal-title'>🍏 Полдник</div><div class='meal-info'>🔹 <b>Банан</b>: девушка — 123 г (110 ккал), парень — 126 г (116 ккал)</div><div class='meal-info'>🔹 <b>Протеин</b>: девушка — 25 г (98 ккал), парень — 32 г (126 ккал)</div><div class='meal-info'><b>Итого Ккал:</b> девушка — 208 ккал, парень — 242 ккал</div></div><div class='card dinner'><div class='meal-title'>🍽 Ужин</div><div class='meal-info'>🔹 <b>Куриная грудка</b>: девушка — 172 г (190 ккал), парень — 189 г (210 ккал)</div><div class='meal-info'>🔹 <b>Булгур</b>: девушка — 98 г (123 ккал), парень — 116 г (147 ккал)</div><div class='meal-info'>🔹 <b>Овощи</b>: девушка — 245 г (49 ккал), парень — 263 г (53 ккал)</div><div class='meal-info'>🔹 <b>Масло</b>: девушка — 6 г (55 ккал), парень — 7 г (66 ккал)</div><div class='meal-info'><b>Итого Ккал:</b> девушка — 417 ккал, парень — 476 ккал</div></div><div class='card' style='background-color:#e0e0e0'><b>БЖУ за день</b><br>Девушка: белки 159.7 г | жиры 49.9 г | углеводы 212.4 г<br>Парень: белки 185.3 г | жиры 59.4 г | углеводы 247.9 г</div></div>
-    <div class="nav-buttons">
-        <button class="nav-button" onclick="openDay(5)">⬅ Предыдущий день</button>
-        <button class="nav-button" onclick="openDay(7)">Следующий день ➡</button>
-    </div>
-    </div><div id='day7' class='tab-content'><div class='table-wrapper'><table><thead>
-    <tr><th>🍽 Прием пищи</th><th>Блюдо</th><th>Продукт</th><th>Вес девушка</th><th>Ккал девушка</th><th>Вес парень</th><th>Ккал парень</th></tr>
-    </thead><tbody><tr><td>Завтрак</td><td>Омлет с овощами и сыром</td><td>Яйца</td><td>123</td><td>172</td><td>158</td><td>221</td></tr><tr><td>Завтрак</td><td>Омлет с овощами и сыром</td><td>Сыр</td><td>25</td><td>74</td><td>32</td><td>95</td></tr><tr><td>Завтрак</td><td>Омлет с овощами и сыром</td><td>Овощи</td><td>184</td><td>37</td><td>210</td><td>42</td></tr><tr><td>Завтрак</td><td>Омлет с овощами и сыром</td><td>Хлеб цельнозерновой</td><td>37</td><td>86</td><td>53</td><td>121</td></tr><tr><td>Перекус</td><td>Йогурт + орехи</td><td>Йогурт 2%</td><td>184</td><td>104</td><td>210</td><td>121</td></tr><tr><td>Перекус</td><td>Йогурт + орехи</td><td>Грецкие орехи</td><td>12</td><td>74</td><td>16</td><td>95</td></tr><tr><td>Обед</td><td>Индейка + картофель + овощи</td><td>Индейка</td><td>172</td><td>184</td><td>189</td><td>205</td></tr><tr><td>Обед</td><td>Индейка + картофель + овощи</td><td>Картофель</td><td>184</td><td>141</td><td>210</td><td>158</td></tr><tr><td>Обед</td><td>Индейка + картофель + овощи</td><td>Овощи</td><td>245</td><td>49</td><td>263</td><td>53</td></tr><tr><td>Обед</td><td>Индейка + картофель + овощи</td><td>Масло</td><td>6</td><td>55</td><td>7</td><td>66</td></tr><tr><td>Полдник</td><td>Яблоко + протеин</td><td>Яблоко</td><td>184</td><td>92</td><td>210</td><td>105</td></tr><tr><td>Полдник</td><td>Яблоко + протеин</td><td>Протеин</td><td>25</td><td>98</td><td>32</td><td>126</td></tr><tr><td>Ужин</td><td>Лосось + гречка + брокколи</td><td>Лосось</td><td>147</td><td>245</td><td>168</td><td>284</td></tr><tr><td>Ужин</td><td>Лосось + гречка + брокколи</td><td>Гречка</td><td>98</td><td>116</td><td>116</td><td>137</td></tr><tr><td>Ужин</td><td>Лосось + гречка + брокколи</td><td>Брокколи</td><td>245</td><td>74</td><td>263</td><td>79</td></tr><tr><td>Ужин</td><td>Лосось + гречка + брокколи</td><td>Масло</td><td>6</td><td>55</td><td>7</td><td>66</td></tr><tr><td colspan='4'><b>Итого ккал</b></td><td>1656</td><td></td><td>1974</td></tr><tr><td colspan='7'><b>БЖУ за день:</b> Девушка: белки 149.2 г | жиры 66.8 г | углеводы 149.3 г. Парень: белки 175.8 г | жиры 80.9 г | углеводы 176.8 г.</td></tr></tbody></table></div><div class='cards'><div class='card breakfast'><div class='meal-title'>🍳 Завтрак</div><div class='meal-info'>🔹 <b>Яйца</b>: девушка — 123 г (172 ккал), парень — 158 г (221 ккал)</div><div class='meal-info'>🔹 <b>Сыр</b>: девушка — 25 г (74 ккал), парень — 32 г (95 ккал)</div><div class='meal-info'>🔹 <b>Овощи</b>: девушка — 184 г (37 ккал), парень — 210 г (42 ккал)</div><div class='meal-info'>🔹 <b>Хлеб цельнозерновой</b>: девушка — 37 г (86 ккал), парень — 53 г (121 ккал)</div><div class='meal-info'><b>Итого Ккал:</b> девушка — 369 ккал, парень — 479 ккал</div></div><div class='card snack'><div class='meal-title'>🥛 Перекус</div><div class='meal-info'>🔹 <b>Йогурт 2%</b>: девушка — 184 г (104 ккал), парень — 210 г (121 ккал)</div><div class='meal-info'>🔹 <b>Грецкие орехи</b>: девушка — 12 г (74 ккал), парень — 16 г (95 ккал)</div><div class='meal-info'><b>Итого Ккал:</b> девушка — 178 ккал, парень — 216 ккал</div></div><div class='card lunch'><div class='meal-title'>🍗 Обед</div><div class='meal-info'>🔹 <b>Индейка</b>: девушка — 172 г (184 ккал), парень — 189 г (205 ккал)</div><div class='meal-info'>🔹 <b>Картофель</b>: девушка — 184 г (141 ккал), парень — 210 г (158 ккал)</div><div class='meal-info'>🔹 <b>Овощи</b>: девушка — 245 г (49 ккал), парень — 263 г (53 ккал)</div><div class='meal-info'>🔹 <b>Масло</b>: девушка — 6 г (55 ккал), парень — 7 г (66 ккал)</div><div class='meal-info'><b>Итого Ккал:</b> девушка — 429 ккал, парень — 482 ккал</div></div><div class='card afternoon'><div class='meal-title'>🍏 Полдник</div><div class='meal-info'>🔹 <b>Яблоко</b>: девушка — 184 г (92 ккал), парень — 210 г (105 ккал)</div><div class='meal-info'>🔹 <b>Протеин</b>: девушка — 25 г (98 ккал), парень — 32 г (126 ккал)</div><div class='meal-info'><b>Итого Ккал:</b> девушка — 190 ккал, парень — 231 ккал</div></div><div class='card dinner'><div class='meal-title'>🍽 Ужин</div><div class='meal-info'>🔹 <b>Лосось</b>: девушка — 147 г (245 ккал), парень — 168 г (284 ккал)</div><div class='meal-info'>🔹 <b>Гречка</b>: девушка — 98 г (116 ккал), парень — 116 г (137 ккал)</div><div class='meal-info'>🔹 <b>Брокколи</b>: девушка — 245 г (74 ккал), парень — 263 г (79 ккал)</div><div class='meal-info'>🔹 <b>Масло</b>: девушка — 6 г (55 ккал), парень — 7 г (66 ккал)</div><div class='meal-info'><b>Итого Ккал:</b> девушка — 490 ккал, парень — 566 ккал</div></div><div class='card' style='background-color:#e0e0e0'><b>БЖУ за день</b><br>Девушка: белки 149.2 г | жиры 66.8 г | углеводы 149.3 г<br>Парень: белки 175.8 г | жиры 80.9 г | углеводы 176.8 г</div></div>
-    <div class="nav-buttons">
-        <button class="nav-button" onclick="openDay(6)">⬅ Предыдущий день</button>
-        <button class="nav-button" onclick="openDay(1)">Следующий день ➡</button>
-    </div>
-    </div>
-<script>
-function openDay(day) {
-    var contents = document.getElementsByClassName('tab-content');
-    for (var i = 0; i < contents.length; i++) {
-        contents[i].classList.remove('active');
-    }
-    document.getElementById('day' + day).classList.add('active');
-}
-document.addEventListener('DOMContentLoaded', function() {
-    openDay(1);
-});
-</script>
-</body></html>
+  <!-- Background layer -->
+  <div id="bg" class="bg" role="img" aria-label="Фон с видом отпуска"></div>
+  <div class="noise"></div>
+
+  <header>
+    <div class="brand"><div class="logo" aria-hidden="true"></div> В ожидании отпуска</div>
+    <nav class="controls" aria-label="Переключение фона">
+      <button class="btn-ghost" id="bgPrev" type="button">⟵ Предыдущее фото</button>
+      <button class="btn-ghost" id="bgNext" type="button">Следующее фото ⟶</button>
+    </nav>
+  </header>
+
+  <main class="wrap">
+    <section class="card" aria-labelledby="title">
+      <h1 id="title">Отпуск уже близко ✈️🏝️</h1>
+      <p class="sub">Отсчитываем дни до старта — расслабься, вдохни глубже и представь шум волн. Таймер ниже всё подскажет.</p>
+
+      <div class="timer-box">
+        <div>
+          <div class="meta" aria-label="Информация о поездке">
+            <span class="chip">Маршрут: море & солнце</span>
+            <span class="chip">Настроение: максимум 🔆</span>
+            <span class="chip">Плейлист: chill & deep house</span>
+          </div>
+
+          <div class="sections" aria-label="Планы на отпуск">
+            <article class="sec">
+              <h3>Расслабон</h3>
+              <p>Пляж, книги, сладкий сон и ничего лишнего.</p>
+            </article>
+            <article class="sec">
+              <h3>Движ</h3>
+              <p>SUP, снорклинг, вечерние прогулки и фото на закате.</p>
+            </article>
+            <article class="sec">
+              <h3>Вкусно</h3>
+              <p>Местная кухня, свежие фрукты и кофе на рассвете.</p>
+            </article>
+            <article class="sec">
+              <h3>Дзен</h3>
+              <p>Мини-детокс от чатов и задач — только ты и море.</p>
+            </article>
+          </div>
+        </div>
+
+        <div>
+          <div class="timer-embed" aria-live="polite" aria-label="Таймер до отпуска">
+            <!-- ВСТРОЕННЫЙ ТАЙМЕР -->
+            <script src="//megatimer.ru/get/ea650308371fe7b51c631392344e31f2.js"></script>
+          </div>
+          <div class="controls">
+            <button id="setBgToday" class="btn" type="button">Сделать фон «сегодняшнего настроения»</button>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        Сделано с любовью к отдыху · Обнови фон и включи музыку для полного эффекта
+      </footer>
+    </section>
+  </main>
+
+  <script>
+    // Набор красивых отпускных фонов (Unsplash). Можно заменить своими ссылками.
+    const backgrounds = [
+      // Тёплый пляж и бирюзовая вода
+      'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80',
+      // Рассвет над пальмами
+      'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=1920&q=80',
+      // Горы + озеро (если отпуск активный)
+      'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1920&q=80',
+      // Закат у моря
+      'https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1920&q=80',
+      // Домики у воды
+      'https://images.unsplash.com/photo-1493558103817-58b2924bce98?auto=format&fit=crop&w=1920&q=80'
+    ];
+
+    let index = 0;
+    const bgEl = document.getElementById('bg');
+    const applyBackground = (url) => {
+      bgEl.style.backgroundImage = `url(${url})`;
+    };
+
+    // Установка стартового фона
+    applyBackground(backgrounds[index]);
+
+    // Переключатели
+    document.getElementById('bgNext').addEventListener('click', () => {
+      index = (index + 1) % backgrounds.length;
+      applyBackground(backgrounds[index]);
+    });
+    document.getElementById('bgPrev').addEventListener('click', () => {
+      index = (index - 1 + backgrounds.length) % backgrounds.length;
+      applyBackground(backgrounds[index]);
+    });
+
+    // «Сегодняшнее настроение»: простая генерация фона по времени суток
+    document.getElementById('setBgToday').addEventListener('click', () => {
+      const hour = new Date().getHours();
+      // Утро 5–11, день 12–16, вечер 17–20, ночь иначе
+      const pick = hour >= 5 && hour <= 11 ? 2   // горы + свежесть утра
+                : hour >= 12 && hour <= 16 ? 0   // яркий пляж
+                : hour >= 17 && hour <= 20 ? 3   // закат
+                : 4;                              // спокойная ночь у воды
+      index = pick;
+      applyBackground(backgrounds[index]);
+    });
+  </script>
+</body>
+</html>
