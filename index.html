@@ -144,7 +144,7 @@
           </div>
           <div class="controls">
             <button id="setBgToday" class="btn" type="button">Сделать фон «сегодняшнего настроения»</button>
-             <button id="musicToggle" type="button">▶ Музыка</button>
+             <button id="musicToggle" class="btn-ghost" type="button">▶ Музыка</button>
           </div>
         </div>
       </div>
@@ -154,10 +154,7 @@
       </footer>
     </section>
   </main>
-  <!-- Фоновая музыка -->
-  <audio id="bgAudio" loop preload="auto">
-    <source src="https://archive.org/download/summer-mix-2020-chillout-lounge-relaxing-deep-house-music/Best%20Of%20Tropical%20Deep%20House%20Music%202020%20Chill%20Out%20Mix%20Best%20Summer%20Hits.mp3" type="audio/mpeg" />
-  </audio>
+  <iframe src="https://archive.org/embed/soundcloud-632634339" width="500" height="30" frameborder="0" webkitallowfullscreen="true" mozallowfullscreen="true" allowfullscreen></iframe>
 
  <script>
   const backgrounds = [
@@ -186,22 +183,31 @@
       : 4;                            // ночь – домики у воды
     applyBackground(backgrounds[pick]);
   });
-   const musicBtn = document.getElementById('musicToggle');
+       const musicBtn = document.getElementById('musicToggle');
     const audio = document.getElementById('bgAudio');
-   musicBtn.addEventListener('click', async () => {
+   // Попробуем разрешить воспроизведение при любом клике или тапе по документу
+    const enableAudio = async () => {
+      try {
+        await audio.play();
+        musicBtn.textContent = '⏸ Пауза';
+        document.removeEventListener('click', enableAudio);
+        document.removeEventListener('touchstart', enableAudio);
+      } catch (err) {
+        console.log('Не удалось воспроизвести аудио:', err);
+      }
+    };
+    document.addEventListener('click', enableAudio);
+    document.addEventListener('touchstart', enableAudio);
+
+    musicBtn.addEventListener('click', async () => {
       if (audio.paused) {
-        try {
-          await audio.play();
-          musicBtn.textContent = '⏸ Пауза';
-        } catch (err) {
-          console.log('Автовоспроизведение заблокировано, требуется клик пользователем');
-        }
+        await audio.play();
+        musicBtn.textContent = '⏸ Пауза';
       } else {
         audio.pause();
         musicBtn.textContent = '▶ Музыка';
       }
     });
-</script>
 
 </body>
 </html>
