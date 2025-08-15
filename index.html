@@ -154,51 +154,34 @@
     </section>
   </main>
 
-  <script>
-    // Набор красивых отпускных фонов (Unsplash). Можно заменить своими ссылками.
-    const backgrounds = [
-      // Тёплый пляж и бирюзовая вода
-      'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80',
-      // Рассвет над пальмами
-      'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=1920&q=80',
-      // Горы + озеро (если отпуск активный)
-      'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1920&q=80',
-      // Закат у моря
-      'https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1920&q=80',
-      // Домики у воды
-      'https://images.unsplash.com/photo-1493558103817-58b2924bce98?auto=format&fit=crop&w=1920&q=80'
-    ];
+ <script>
+  const backgrounds = [
+    'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80',
+    'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=1920&q=80',
+    'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1920&q=80',
+    'https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1920&q=80',
+    'https://images.unsplash.com/photo-1493558103817-58b2924bce98?auto=format&fit=crop&w=1920&q=80'
+  ];
 
-    let index = 0;
-    const bgEl = document.getElementById('bg');
-    const applyBackground = (url) => {
-      bgEl.style.backgroundImage = `url(${url})`;
-    };
+  const bgEl = document.getElementById('bg');
+  const applyBackground = (url) => {
+    bgEl.style.backgroundImage = `url(${url})`;
+  };
 
-    // Установка стартового фона
-    applyBackground(backgrounds[index]);
+  // Установка стартового фона
+  applyBackground(backgrounds[0]);
 
-    // Переключатели
-    document.getElementById('bgNext').addEventListener('click', () => {
-      index = (index + 1) % backgrounds.length;
-      applyBackground(backgrounds[index]);
-    });
-    document.getElementById('bgPrev').addEventListener('click', () => {
-      index = (index - 1 + backgrounds.length) % backgrounds.length;
-      applyBackground(backgrounds[index]);
-    });
+  // «Сегодняшнее настроение»: фон по времени суток
+  document.getElementById('setBgToday').addEventListener('click', () => {
+    const hour = new Date().getHours();
+    const pick =
+      hour >= 5 && hour <= 11 ? 2   // утро – горы + свежесть
+      : hour >= 12 && hour <= 16 ? 0 // день – пляж
+      : hour >= 17 && hour <= 20 ? 3 // вечер – закат
+      : 4;                            // ночь – домики у воды
+    applyBackground(backgrounds[pick]);
+  });
+</script>
 
-    // «Сегодняшнее настроение»: простая генерация фона по времени суток
-    document.getElementById('setBgToday').addEventListener('click', () => {
-      const hour = new Date().getHours();
-      // Утро 5–11, день 12–16, вечер 17–20, ночь иначе
-      const pick = hour >= 5 && hour <= 11 ? 2   // горы + свежесть утра
-                : hour >= 12 && hour <= 16 ? 0   // яркий пляж
-                : hour >= 17 && hour <= 20 ? 3   // закат
-                : 4;                              // спокойная ночь у воды
-      index = pick;
-      applyBackground(backgrounds[index]);
-    });
-  </script>
 </body>
 </html>
