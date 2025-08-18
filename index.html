@@ -7,72 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
-  <style>
-    :root{
-      --bg-blur: 6px;
-      --glass-bg: rgba(255,255,255,.14);
-      --glass-stroke: rgba(255,255,255,.3);
-      --accent: #00d4ff;
-      --accent-2: #00ffa3;
-      --text: #0b1220;
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      font-family:"Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      color:var(--text);
-      background: #0b1220;
-    }
-    .bg{
-      position: fixed;
-      inset: 0;
-      z-index: -2;
-      background-position:center;
-      background-size:cover;
-      background-attachment: fixed;
-      transition: background-image .6s ease-in-out;
-      filter: saturate(1.05) contrast(1.05);
-    }
-    .bg::after{
-      content:"";
-      position:absolute; inset:0;
-      background: radial-gradient(80% 60% at 50% 20%, rgba(255,255,255,.18) 0%, rgba(255,255,255,.05) 40%, rgba(0,0,0,.55) 100%),
-                  linear-gradient(180deg, rgba(0,0,0,.05) 0%, rgba(0,0,0,.55) 100%);
-    }
-    .noise{position:fixed; inset:0; z-index:-1; opacity:.04; pointer-events:none; background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23n)" opacity=".6"/></svg>'); mix-blend-mode:overlay}
-
-    .wrap{min-height:100dvh; display:grid; place-items:center; padding:120px 20px 40px}
-    .card{
-      width:min(980px, 96vw);
-      padding:30px;
-      border-radius:28px;
-      background: linear-gradient(180deg, rgba(255,255,255,.28), rgba(255,255,255,.12));
-      border:1px solid var(--glass-stroke);
-      box-shadow: 0 20px 80px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.25);
-      backdrop-filter: blur(calc(var(--bg-blur) + 5px));
-      -webkit-backdrop-filter: blur(calc(var(--bg-blur) + 5px));
-    }
-    h1{margin:0 0 8px; font-size: clamp(28px, 6vw, 62px); line-height:1.05; letter-spacing: -.5px}
-    .sub{font-size: clamp(14px, 2.5vw, 18px); opacity:.9; margin-bottom:20px}
-
-    .timer-box{display:grid; gap:18px; align-items:center; grid-template-columns: 1fr}
-    .meta{display:flex; flex-wrap:wrap; gap:12px; align-items:center; font-size:14px}
-    .chip{padding:8px 12px; border-radius:999px; background: rgba(255,255,255,.4); border:1px solid var(--glass-stroke)}
-
-    .controls{display:flex; flex-wrap:wrap; gap:10px; margin-top:14px}
-    .btn{appearance:none; border:0; cursor:pointer; padding:12px 16px; border-radius:12px; font-weight:600; background: linear-gradient(135deg, var(--accent), var(--accent-2)); box-shadow: 0 10px 26px rgba(0, 212, 255, .35)}
-    .btn-ghost{background: rgba(255,255,255,.5); border:1px solid var(--glass-stroke); box-shadow:none}
-
-    .sections{display:grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap:16px; margin-top:24px}
-    .sec{padding:18px; border-radius:18px; background: rgba(255,255,255,.5); border:1px solid var(--glass-stroke)}
-    .sec h3{margin:0 0 8px}
-
-    footer{margin-top:28px; text-align:center; font-size:12px; opacity:.8}
-    .timer-embed{min-height:120px; display:grid; place-items:center; border-radius:16px; border:1px dashed rgba(255,255,255,.45); background: rgba(255,255,255,.35)}
-
-    @media (min-width: 880px){ .timer-box{grid-template-columns: 1.2fr .8fr} }
-  </style>
+  <link rel="stylesheet" href="./style.css">
 </head>
 <body>
   <!-- Фон -->
@@ -108,91 +43,21 @@
           </div>
           <div class="controls">
             <button id="setBgToday" class="btn" type="button">Сделать фон «сегодняшнего настроения»</button>
-            <!-- Прозрачный iframe с автозапуском музыки -->
+            <div class="player" aria-label="Музыкальный плеер в стиле стекла">
+              <button id="musicToggle" class="toggle" type="button">▶ Музыка</button>
+              <span class="label" aria-hidden="true">Громкость</span>
+              <input id="volume" class="volume" type="range" min="0" max="1" step="0.01" value="0.7" aria-label="Громкость" />
+              <audio id="bgAudio" preload="auto">
+                <source src="./music/summer-vibe_medium-192826.mp3" type="audio/mpeg" />
+              </audio>
+            </div>
           </div>
-        </div>
         
       </div>
-      <footer>
-        Сделано с любовью к отдыху · Обнови фон и включи музыку для полного эффекта
-        <div>
-          <!-- Видимый iframe с автозапуском музыки -->
-<!-- Видимый iframe как визуальный плеер -->
-      <iframe src="https://archive.org/embed/soundcloud-632634339?autoplay=1" 
-              width="500" height="30" 
-              frameborder="0" 
-              allow="autoplay" 
-              webkitallowfullscreen="true" 
-              mozallowfullscreen="true" 
-              allowfullscreen>
-      </iframe>
-
-        </div>
-      </footer>
-      <script src="https://w.soundcloud.com/player/api.js"></script>
-      <script>
-          // Ждём загрузки страницы
-          document.addEventListener('DOMContentLoaded', function() {
-              // Получаем iframe по id
-              const iframeElement = document.getElementById('soundcloud-player');
-              // Инициализируем виджет SoundCloud
-              const widget = SC.Widget(iframeElement);
-              // Устанавливаем громкость на 100%
-              widget.setVolume(100);
-          });
-      </script>
+      <footer class="card-footer">Сделано с любовью к отдыху · Обнови фон и включи музыку для полного эффекта</footer>
     </section>
   </main>
 
-  <script>
-    
-    // Фоны
-    const backgrounds = [
-      'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80',
-      'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=1920&q=80',
-      'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1920&q=80',
-      'https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=1920&q=80',
-      'https://images.unsplash.com/photo-1493558103817-58b2924bce98?auto=format&fit=crop&w=1920&q=80'
-    ];
-
-    const bgEl = document.getElementById('bg');
-    const applyBackground = (url) => { bgEl.style.backgroundImage = `url(${url})`; };
-    applyBackground(backgrounds[0]);
-
-    document.getElementById('setBgToday').addEventListener('click', () => {
-      const hour = new Date().getHours();
-      const pick = hour >= 5 && hour <= 11 ? 2 : hour >= 12 && hour <= 16 ? 0 : hour >= 17 && hour <= 20 ? 3 : 4;
-      applyBackground(backgrounds[pick]);
-    });
-
-    // Музыка: максимально агрессивный автозапуск в рамках политик браузера
-    const audioEl = document.getElementById('bgAudio');
-    const toggleBtn = document.getElementById('musicToggle');
-    const vol = document.getElementById('volume');
-
-    function setUIPlaying(on){ toggleBtn.textContent = on ? '⏸ Пауза' : '▶ Музыка'; }
-    async function tryPlay(){
-      try { await audioEl.play(); setUIPlaying(true); }
-      catch(e){ /* Автоплей может быть заблокирован — стартуем при первом жесте */ }
-    }
-
-    if (audioEl && toggleBtn && vol){
-      audioEl.volume = parseFloat(vol.value);
-      // 1) Попытка сразу при загрузке
-      window.addEventListener('load', tryPlay);
-      // 2) Повторить при возвращении вкладки в фокус
-      document.addEventListener('visibilitychange', () => { if (!document.hidden) tryPlay(); });
-      // 3) Гарантированный запуск на первом взаимодействии
-      const resume = async () => { await tryPlay(); };
-      document.addEventListener('click', resume, { once:true });
-      document.addEventListener('touchstart', resume, { once:true });
-      // Кнопка
-      toggleBtn.addEventListener('click', async () => {
-        if (audioEl.paused) { await tryPlay(); }
-        else { audioEl.pause(); setUIPlaying(false); }
-      });
-      vol.addEventListener('input', e => { audioEl.volume = parseFloat(e.target.value); });
-    }
-  </script>
+  <script src="./app.js"></script>
 </body>
 </html>
